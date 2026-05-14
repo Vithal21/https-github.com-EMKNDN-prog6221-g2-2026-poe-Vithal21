@@ -179,7 +179,7 @@ namespace CyberSecurityChatbot.Classes
         /// Returns a random response for selected topic.
         /// </summary>
         private string GetRandomResponse(string keyword)
-        {
+        { 
             // Get response list
             List<string> possibleResponses =
                 responses[keyword];

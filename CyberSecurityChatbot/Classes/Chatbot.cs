@@ -3,16 +3,24 @@ using System.Collections.Generic;
 
 namespace CyberSecurityChatbot.Classes
 {
+    /// <summary>
+    /// Handles chatbot logic, keyword detection,
+    /// memory, sentiment detection, and responses.
+    /// </summary>
     public class Chatbot
     {
+        // Random object for random responses
         Random random = new Random();
 
-        public string UserName { get; set; }
-
+        // Stores user's favourite topic
         public string FavouriteTopic { get; set; }
 
+        // Stores current topic for conversation flow
         private string currentTopic = "";
 
+        /// <summary>
+        /// Dictionary storing keywords and responses.
+        /// </summary>
         Dictionary<string, List<string>> responses =
             new Dictionary<string, List<string>>()
         {
@@ -21,8 +29,8 @@ namespace CyberSecurityChatbot.Classes
                 new List<string>()
                 {
                     "Use strong passwords with symbols and numbers.",
-                    "Avoid using your birthday in passwords.",
-                    "Use a different password for every account."
+                    "Avoid using personal information in passwords.",
+                    "Use different passwords for each account."
                 }
             },
 
@@ -30,9 +38,9 @@ namespace CyberSecurityChatbot.Classes
                 "phishing",
                 new List<string>()
                 {
-                    "Never click suspicious email links.",
-                    "Check the sender's email carefully.",
-                    "Phishing emails often create urgency."
+                    "Avoid clicking suspicious links.",
+                    "Check email addresses carefully.",
+                    "Phishing scams often create urgency."
                 }
             },
 
@@ -40,49 +48,95 @@ namespace CyberSecurityChatbot.Classes
                 "privacy",
                 new List<string>()
                 {
-                    "Review your privacy settings regularly.",
-                    "Avoid sharing personal information online.",
-                    "Use two-factor authentication for better privacy."
+                    "Review privacy settings regularly.",
+                    "Enable two-factor authentication.",
+                    "Avoid sharing personal information online."
+                }
+            },
+
+            {
+                "vpn",
+                new List<string>()
+                {
+                    "VPNs help protect your online privacy.",
+                    "A VPN encrypts your internet connection."
                 }
             }
         };
 
+        /// <summary>
+        /// Processes user input and returns chatbot response.
+        /// </summary>
         public string GetResponse(string input)
         {
+            // Convert input to lowercase
             input = input.ToLower();
+
+            #region Greeting Responses
+
+            // Greeting responses
+            if (input.Contains("hello") ||
+                input.Contains("hi") ||
+                input.Contains("hey"))
+            {
+                string[] greetings =
+                {
+                    "Hello! How can I help you stay safe online today?",
+                    "Hi there! Welcome to the Cybersecurity Awareness Bot.",
+                    "Hey! I'm here to help you with cybersecurity awareness.",
+                    "Hello! Ask me anything about online safety."
+                };
+
+                int greetingIndex = random.Next(greetings.Length);
+
+                return greetings[greetingIndex];
+            }
+
+            #endregion
+
+            #region Sentiment Detection
 
             // SENTIMENT DETECTION
             if (input.Contains("worried"))
             {
-                return "It's understandable to feel worried. Online scams are common, but staying informed helps protect you.";
+                return "It's understandable to feel worried. Staying informed helps protect you online.";
             }
 
             if (input.Contains("frustrated"))
             {
-                return "Cybersecurity can feel overwhelming sometimes, but you're doing great by learning about it.";
+                return "Cybersecurity can feel difficult sometimes, but you're learning valuable skills.";
             }
 
-            if (input.Contains("curious"))
-            {
-                return "Curiosity is great! Learning cybersecurity helps keep you safe online.";
-            }
+            #endregion
 
-            // MEMORY
+            #region Memory System
+
+            // MEMORY SYSTEM
             if (input.Contains("i like"))
             {
-                FavouriteTopic = input.Replace("i like", "").Trim();
+                FavouriteTopic =
+                    input.Replace("i like", "").Trim();
 
-                return $"Great! I'll remember that you're interested in {FavouriteTopic}.";
+                return $"Great! I'll remember that you like {FavouriteTopic}.";
             }
 
-            // FOLLOW-UP FLOW
-            if (input.Contains("tell me more") || input.Contains("another tip"))
+            #endregion
+
+            #region Conversation Flow
+
+            // CONVERSATION FLOW
+            if (input.Contains("tell me more") ||
+                input.Contains("another tip"))
             {
                 if (currentTopic != "")
                 {
                     return GetRandomResponse(currentTopic);
                 }
             }
+
+            #endregion
+
+            #region Keyword Recognition
 
             // KEYWORD RECOGNITION
             foreach (var keyword in responses.Keys)
@@ -95,27 +149,46 @@ namespace CyberSecurityChatbot.Classes
                 }
             }
 
-            // GENERAL QUESTIONS
+            #endregion
+
+            #region General Responses
+
+            // GENERAL RESPONSES
             if (input.Contains("how are you"))
             {
-                return "I'm doing great and ready to help you stay safe online!";
+                return "I'm doing great and ready to help keep you safe online!";
             }
 
-            if (input.Contains("your purpose"))
+            if (input.Contains("thank you"))
             {
-                return "My purpose is to educate users about cybersecurity awareness.";
+                return "You're welcome! Stay cyber safe.";
             }
+
+            if (input.Contains("bye"))
+            {
+                return "Goodbye! Stay safe online.";
+            }
+
+            #endregion
 
             // DEFAULT RESPONSE
-            return "I didn't quite understand that. Could you rephrase?";
+            return "I didn't quite understand that. Please try again.";
         }
 
+        /// <summary>
+        /// Returns a random response for selected topic.
+        /// </summary>
         private string GetRandomResponse(string keyword)
         {
-            List<string> possibleResponses = responses[keyword];
+            // Get response list
+            List<string> possibleResponses =
+                responses[keyword];
 
-            int index = random.Next(possibleResponses.Count);
+            // Generate random index
+            int index =
+                random.Next(possibleResponses.Count);
 
+            // Return random response
             return possibleResponses[index];
         }
     }

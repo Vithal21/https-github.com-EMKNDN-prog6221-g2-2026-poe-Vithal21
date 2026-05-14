@@ -184,7 +184,7 @@ namespace CyberSecurityChatbot.Classes
             List<string> possibleResponses =
                 responses[keyword];
 
-            // Generate random index
+            // Generate random index 
             int index =
                 random.Next(possibleResponses.Count);
 
